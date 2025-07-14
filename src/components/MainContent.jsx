@@ -9,10 +9,12 @@ import {
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 const BASE_URL_SAFE = BASE_URL.replace(/\/+$/, '');  // Remove trailing slashes
-const languageOptions = ['akan', 'arabic', 'french', 'swahili', 'portuguese'];
+const languageOptions = ['akan', 'arabic', 'french', 'swahili', 'portuguese','english'];
 
 function MainContent() {
   const [message, setMessage] = useState('');
+  /*const [] = useState('');*/
+
   const [activeButton, setActiveButton] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -30,6 +32,8 @@ function MainContent() {
   const sourceRef = useRef(null);
 
   useEffect(() => {
+      
+
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
@@ -44,15 +48,16 @@ function MainContent() {
       setAudioChunks([]);
       setSelectedLanguage(lang);
       setIsRecording(true);
-      setRecordStatus(`🎙 Recording in ${lang.toUpperCase()}...`);
+      setRecordStatus(` ${lang.toUpperCase()} `);
 
+      
       audioContextRef.current = new AudioContext();
       sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
       analyserRef.current = audioContextRef.current.createAnalyser();
       sourceRef.current.connect(analyserRef.current);
       analyserRef.current.fftSize = 64;
 
-      drawWaveform();
+      
 
       recorder.ondataavailable = (event) => {
         setAudioChunks((prev) => [...prev, event.data]);
@@ -78,8 +83,13 @@ function MainContent() {
     if (audioContextRef.current) audioContextRef.current.close();
   };
 
-  const drawWaveform = () => {
+  /*const drawWaveform = () => {*/
+    useEffect(() => {
+    if (!isRecording) return;                    
+
+  
     const canvas = canvasRef.current;
+    
     const ctx = canvas.getContext("2d");
     const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
@@ -89,26 +99,45 @@ function MainContent() {
       analyserRef.current.getByteTimeDomainData(dataArray);
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#3b82f6";
 
-      const sliceWidth = canvas.width / bufferLength;
-      let x = 0;
+      const bufferLength = dataArray.length;
+      const barCount = 10; 
+      const sliceWidth = canvas.width / barCount;
+      const halfHeight = canvas.height / 2;
+      for (let i = 0; i < barCount; i++) {
+        const index = Math.floor(i * (bufferLength / barCount));
+        const v = dataArray[index] / 255;
+        const barHeight = v * canvas.height;
 
-      for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = (v * canvas.height) / 2;
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        x += sliceWidth;
+        const x = i * sliceWidth + sliceWidth * 0.1; 
+        const y = halfHeight - barHeight / 2;
+        const width = sliceWidth * 0.8;              
+        const height = barHeight;
+
+        
+        const radius = width / 2;
+
+        ctx.fillStyle = "#3b82f6"; 
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fill();
       }
-
-      ctx.lineTo(canvas.width, canvas.height / 2);
-      ctx.stroke();
     };
 
+
     draw();
-  };
+    return () => cancelAnimationFrame(animationRef.current);
+    },[isRecording])
+  /*};*/
 
   const sendAudioToBackend = async (audioBlob, language) => {
     const formData = new FormData();
@@ -127,7 +156,7 @@ function MainContent() {
       setRecordStatus('');
     } catch (err) {
       console.error("Upload failed:", err);
-      setRecordStatus('❌ Failed to send audio.');
+      setRecordStatus(' Failed to send audio.');
     }
   };
 
@@ -147,9 +176,9 @@ function MainContent() {
       });
 
       const data = await res.json();
-      console.log("✅ Response from", endpoint, data);
+      console.log("Response from", endpoint, data);
     } catch (err) {
-      console.error("❌ Request failed:", err);
+      console.error("Request failed:", err);
     }
 
     setMessage('');
@@ -252,8 +281,8 @@ function MainContent() {
 
           {showLanguagePopup && !isRecording && (
             <div className="absolute bottom-14 right-3 bg-white rounded-2xl shadow-lg border border-gray-200 z-50 p-2 w-48 text-sm font-medium text-gray-800">
-              <div className="text-center text-blue-600 font-semibold mb-2">🎙 Choose Language</div>
-              <div className="max-h-[96px] overflow-y-auto flex flex-col gap-1 pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="text-center text-blue-600 font-semibold mb-2">Choose Language</div>
+              <div className="max-h-[50px] overflow-y-auto flex flex-col gap-1 pr-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                 {languageOptions.map((lang) => (
                   <button
                     key={lang}
