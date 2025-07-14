@@ -8,7 +8,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const BASE_URL = import.meta.env.VITE_API_URL;
-const BASE_URL_SAFE = BASE_URL.replace(/\/+$/, '');  // Remove trailing slashes
+const BASE_URL_SAFE = BASE_URL.replace(/\/+$/, '');  
 const languageOptions = ['akan', 'arabic', 'french', 'swahili', 'portuguese','english'];
 
 function MainContent() {
