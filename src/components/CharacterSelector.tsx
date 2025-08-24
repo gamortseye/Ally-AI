@@ -8,12 +8,12 @@ const CharacterSelector = ({
     {
       id: "john",
       name: "John",
-      image: "src/assets/john.png"
+      image: "../assets/john.png"
     },
     {
       id: "anna",
       name: "Anna",
-      image: "src/assets/anna.png"
+      image: "../assets/anna.png"
     }
   ];
 
