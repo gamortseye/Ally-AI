@@ -22,7 +22,7 @@ export default function Sidebar() {
             language: 'en',
             sortBy: 'publishedAt',
             pageSize: 6,
-            apiKey: import.meta.env.VITE_NEWS_API_KEY || process.env.NEWS_API_KEY, // store key in env
+            apiKey: process.env.VITE_NEWS_API_KEY, // store key in env
           },
         });
         setArticles(data.articles ?? []);
