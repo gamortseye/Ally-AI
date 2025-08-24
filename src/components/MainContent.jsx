@@ -7,7 +7,7 @@ import {
   StopIcon
 } from '@heroicons/react/24/outline';
 
-const RAW_BASE = process.env.VITE_API_URL || ''; // e.g. "https://<ngrok-free>.app"
+const RAW_BASE = import.meta.env.VITE_API_URL || ''; // e.g. "https://<ngrok-free>.app"
 const BASE = RAW_BASE.replace(/\/+$/, '');
 const API_ROOT = BASE.replace(/\/api\/generate\/?$/, '');
 const languageOptions = ['akan', 'arabic', 'french', 'swahili', 'portuguese','english'];
