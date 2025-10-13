@@ -1,4 +1,5 @@
-
+import React from "react";
+import PropTypes from "prop-types";
 import CharacterSelector from "./CharacterSelector";
 
 const Sidebar = ({ onSelectCharacter, selectedCharacter }) => {
@@ -20,7 +21,7 @@ const Sidebar = ({ onSelectCharacter, selectedCharacter }) => {
 
           <div className="mt-12">
             <h3 className="text-2xl font-bold mb-8 text-center">Select Your Charator</h3>
-            <CharacterSelector 
+            <CharacterSelector
               onSelectCharacter={onSelectCharacter}
               selectedCharacter={selectedCharacter}
             />
@@ -33,6 +34,20 @@ const Sidebar = ({ onSelectCharacter, selectedCharacter }) => {
       </div>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  onSelectCharacter: PropTypes.func,
+  selectedCharacter: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.object,
+  ]),
+};
+
+Sidebar.defaultProps = {
+  onSelectCharacter: () => {},
+  selectedCharacter: null,
 };
 
 export default Sidebar;

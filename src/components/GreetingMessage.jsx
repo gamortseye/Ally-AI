@@ -1,3 +1,5 @@
+import React from "react";
+
 const GreetingMessage = () => {
   return (
     <>
@@ -21,13 +23,29 @@ const GreetingMessage = () => {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          role="img"
+          aria-label="Smiling face"
         >
           {/* Head */}
           <circle cx="12" cy="12" r="10" />
 
           {/* Eyes */}
-          <circle className="eye" cx="8.5" cy="9" r="1.5" fill="#417CDB" style={{ animation: "blink 4s infinite", transformOrigin: "center" }} />
-          <circle className="eye" cx="15.5" cy="9" r="1.5" fill="#417CDB" style={{ animation: "blink 4s infinite", transformOrigin: "center" }} />
+          <circle
+            className="eye"
+            cx="8.5"
+            cy="9"
+            r="1.5"
+            fill="#417CDB"
+            style={{ animation: "blink 4s infinite", transformOrigin: "center" }}
+          />
+          <circle
+            className="eye"
+            cx="15.5"
+            cy="9"
+            r="1.5"
+            fill="#417CDB"
+            style={{ animation: "blink 4s infinite", transformOrigin: "center" }}
+          />
 
           {/* Wild Smiling Mouth */}
           <path d="M6 15 C12 24 18 15 18 15">
