@@ -108,8 +108,8 @@ export default function MainContent() {
   const showChatArea = isLoading || hasAssistant || showSpace;
 
   const chatWrapperClass = showChatArea
-    ? 'w-full max-w-3xl bg-white mb-4 overflow-hidden flex flex-col flex-1'
-    : 'w-full max-w-3xl bg-white rounded-lg border border-gray-200 mb-4 shadow-sm overflow-hidden';
+    ? 'w-full max-w-3xl bg-white-70 mb-4 overflow-hidden flex flex-col flex-1'
+    : 'w-full max-w-3xl bg-white-70 rounded-lg border border-gray-200 mb-4 shadow-sm overflow-hidden';
 
   const chatBoxInnerClass = showChatArea
     ? 'px-4 py-3 overflow-y-auto flex-1'

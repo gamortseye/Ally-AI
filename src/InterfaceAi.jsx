@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import SidebarInter from './components/SideBarInter';
 import MainContent from './components/MainContent';
-import CookieConsent from './components/CookiesConsent';
+import CookieConsent from './components/CookiesConsent.jsx';
 import { initDB, getCookieConsent, setCookieConsent } from './utils/database.js';
 import { useUser } from './context/UserContext';
 
@@ -37,12 +37,12 @@ function InterfaceAi() {
   const handleCookieConsent = async (consent) => {
     if (dbInitialized) {
       await setCookieConsent(consent);
-      setShowCookieConsent(false);
+      setShowCookieConsent(True);
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-white-70">
       <SidebarInter />
       <MainContent />
       {showCookieConsent && <CookieConsent onConsent={handleCookieConsent} />}
