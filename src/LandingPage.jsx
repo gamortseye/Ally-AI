@@ -1,10 +1,11 @@
 
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef }  from "react";
+import { motion,useScroll, useTransform  } from "framer-motion";
 import { PhoneIcon } from "@heroicons/react/24/solid";
 import bgImage from "./assets/Opendoor.png"; // 🔹 Replace with your actual image file path
 import Allylogo from "./assets/ally logo.svg";
+import { MicIcon, EyeOffIcon, ArrowLeft, ArrowRight } from "lucide-react";
 const HeroSection = () => {
   return (
     <section className="relative flex flex-col min-h-screen text-white overflow-hidden">
@@ -213,18 +214,25 @@ const ServicesCards = () => {
     },
   ];
 
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Parallax effect: slight vertical translation on scroll
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.8]);
+
   return (
-    <section className="w-full flex justify-center bg-white-70 py-20">
-      {/* Fixed centered container */}
-      <div
+    <section ref={containerRef} className="w-full flex justify-center bg-white py-20 overflow-hidden">
+      <motion.div
+        style={{ y, opacity }}
         className="flex flex-wrap justify-center gap-10"
-        style={{
-          width: "1561px",
-          maxWidth: "100%",
-        }}
+        transition={{ type: "spring", stiffness: 50 }}
       >
         {cards.map((card, index) => (
-          <div
+          <motion.div
             key={index}
             className={`${card.bg} ${card.textColor} ${card.rotation}
                         flex-shrink-0 p-8 rounded-3xl shadow-lg 
@@ -233,6 +241,13 @@ const ServicesCards = () => {
             style={{
               width: "250px",
               minHeight: "420px",
+            }}
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 80 }}
+            transition={{
+              duration: 0.9,
+              delay: index * 0.15,
+              ease: "easeOut",
             }}
           >
             <h3 className="font-bold text-xl mb-4 uppercase tracking-wide">
@@ -243,75 +258,253 @@ const ServicesCards = () => {
             <p className="text-sm leading-relaxed opacity-90">
               {card.description}
             </p>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 };
 
 
-
 // AmazingServices Component
+// src/components/AmazingServices.jsx
+
 const AmazingServices = () => {
+  const sectionRef = useRef(null);
+
+  // Track scroll progress for the entire section
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Apply subtle parallax movement
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0.9]);
+
   const services = [
     {
-      icon: "💬",
-      title: "Voice First - Speak, Don't Type",
-      description: "Express yourself naturally through voice. Our AI listens and understands your concerns without the barrier of typing."
+      id: "01",
+      icon: <MicIcon className="w-7 h-7 text-black" />,
+      title: "Voice to Feel — Speak, Don’t Type",
+      subtitle: "Because emotions are better spoken than typed.",
+      description:
+        "Our advanced speech recognition (ASR) lets you talk directly to the AI, expressing your thoughts and emotions in your own voice. The system listens, understands, and responds with empathy — creating a more human, healing conversation.",
+      label: "Voice",
     },
     {
-      icon: "🤝",
+      id: "02",
+      icon: <EyeOffIcon className="w-7 h-7 text-black" />,
       title: "Anonymous Support Through Avatar Identity",
-      description: "Feel safe sharing your deepest concerns. Use an avatar identity to maintain complete privacy while getting the help you need."
-    }
+      subtitle: "Your story, your safety, your control",
+      description:
+        "Choose an avatar that represents you and talk freely without revealing your real identity. Our platform ensures full privacy, so you can express your emotions safely and honestly — without fear or judgment.",
+      label: "Anonymous",
+    },
   ];
 
   return (
-    <div className="py-20 px-4 bg-white">
-      <div className="max-w-6xl mx-auto text-center mb-12">
-        <h2 className="text-4xl font-bold mb-4">Explore The Amazing Services Ally AI Provides</h2>
-        <p className="text-gray-600">Innovative features designed to support your mental health journey</p>
-      </div>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+    <motion.section
+      ref={sectionRef}
+      className="py-24 bg-white text-gray-800 overflow-hidden"
+      style={{ y, opacity }}
+      transition={{ type: "spring", stiffness: 50 }}
+    >
+      {/* Header Section */}
+      <motion.div
+        className="text-center mb-20 px-6"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.0, ease: "easeOut" }}
+        viewport={{ once: true }}
+      >
+        <div className="inline-block border border-gray-300 shadow-sm shadow-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm mb-6 backdrop-blur-sm">
+          features
+        </div>
+        <h2 className="text-4xl md:text-5xl font-bold mb-5">
+          Explore The Amazing Features Ally AI Provides
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          In a world where silence often hides pain, our AI was built to listen —
+          not to judge, but to understand. It doesn’t replace a human voice, but
+          it becomes one when no one else is there to hear yours.
+        </p>
+        <p className="text-gray-500 mt-2 max-w-2xl mx-auto">
+          Through intelligent conversation, our system recognizes emotion,
+          offers comfort, and guides survivors toward the right kind of help —
+          from professional counseling to legal awareness.
+        </p>
+      </motion.div>
+
+      {/* Features Section */}
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
         {services.map((service, index) => (
-          <div key={index} className="text-center">
-            <div className="text-6xl mb-4">{service.icon}</div>
-            <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-            <p className="text-gray-600 leading-relaxed">{service.description}</p>
-            <button className="mt-6 text-blue-600 font-semibold hover:underline">Learn More →</button>
-          </div>
+          <motion.div
+            key={service.id}
+            className="px-6 py-12 flex flex-col items-center text-center md:items-start md:text-left"
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 1.1,
+              delay: index * 0.3,
+              ease: "easeOut",
+            }}
+            viewport={{ once: true }}
+            style={{
+              y: useTransform(scrollYProgress, [0, 1], [index === 0 ? 30 : -30, index === 0 ? -30 : 30]),
+            }}
+          >
+            {/* Icon + Label + Vertical Line */}
+            <div className="flex items-center mb-6">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+                  {service.icon}
+                </div>
+                <span className="text-blue-600 font-medium">{service.label}</span>
+              </div>
+              <div className="h-10 w-[2px] bg-black ml-90"></div>
+            </div>
+
+            {/* Superscript ID on the Left Side of the Title */}
+            <div className="flex items-start justify-center md:justify-start gap-1 mb-2">
+              <sup className="text-gray-400 text-sm font-semibold translate-y-[-6px]">
+                {service.id}
+              </sup>
+              <h3 className="text-2xl font-bold">{service.title}</h3>
+            </div>
+
+            <p className="text-gray-700 font-medium mb-4">{service.subtitle}</p>
+            <p className="text-gray-500 leading-relaxed mb-8">{service.description}</p>
+
+            <motion.div
+              className="w-full flex justify-center"
+              whileHover={{ scale: 1.1 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <button className="border border-gray-300 rounded-full px-6 py-2 text-sm font-medium hover:bg-gray-100 transition">
+                Learn more
+              </button>
+            </motion.div>
+          </motion.div>
         ))}
       </div>
-    </div>
+    </motion.section>
   );
 };
 
 // SupportSection Component
+
 const SupportSection = () => {
+  const ref = useRef(null);
+
+  // Scroll tracking for the entire section
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  // Smooth parallax transforms
+  const quoteY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const textY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const profileY = useTransform(scrollYProgress, [0, 1], [-30, 30]);
+  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.8, 1], [0.8, 1, 1, 0.9]);
+
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-blue-700 py-20 px-4 text-white">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
-        <div className="md:w-1/2 mb-8 md:mb-0">
-          <div className="text-6xl mb-6">📖</div>
-          <h2 className="text-4xl font-bold mb-4">How many stories of pain are left untold?</h2>
-          <p className="text-xl leading-relaxed">
-            Millions of people suffer in silence every day. Breaking the stigma around mental health starts with creating safe spaces to share. We believe every story deserves to be heard, and every person deserves support.
+    <motion.section
+      ref={ref}
+      className="bg-[#4178E1] w-full text-white py-24 px-6 md:px-16 overflow-hidden"
+      style={{ opacity }}
+    >
+      {/* Quote + Text Section */}
+      <div className="max-w-5xl mx-auto">
+        {/* Big left-aligned quote mark with parallax */}
+        <motion.div
+          className="text-[300px] font-bold leading-none text-white -mb-24 text-left select-none"
+          style={{ y: quoteY }}
+          transition={{ type: "spring", stiffness: 50 }}
+        >
+          “
+        </motion.div>
+
+        {/* Main quote */}
+        <motion.div style={{ y: textY }}>
+          <h2 className="text-3xl md:text-5xl font-semibold text-center mb-6">
+            How many stories of pain are left untold?
+          </h2>
+          <p className="text-lg leading-relaxed text-white/90 text-center mb-4">
+            From that question grew a movement — a platform dedicated to helping survivors of
+            Gender-Based Violence (GBV) speak, heal, and be heard.
           </p>
-          <button className="mt-6 bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-blue-50 transition-all">
-            Share Your Story
-          </button>
-        </div>
-        <div className="md:w-1/3 flex justify-center">
-          <div className="bg-green-400 rounded-full p-8 shadow-2xl">
-            <div className="text-6xl">🔒</div>
-          </div>
-        </div>
+          <p className="text-lg leading-relaxed text-white/90 text-center">
+            We believe GBV is not just a women’s issue or a men’s issue — it’s a human issue that
+            demands empathy, action, and accountability.”
+          </p>
+        </motion.div>
       </div>
-    </div>
+
+      {/* Profile + Arrows + Avatar */}
+      <motion.div
+        className="max-w-5xl mx-auto flex flex-col md:flex-row items-right justify-between mt-12 px-4 md:translate-x-20"
+        style={{ y: profileY }}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        viewport={{ once: true }}
+      >
+        {/* Profile Info */}
+        <motion.div
+          className="flex items-center gap-4"
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <img
+            src="https://images.unsplash.com/photo-1603415526960-f7e0328b3c49?auto=format&fit=crop&w=80&q=80"
+            alt="Evans"
+            className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
+          />
+          <div className="text-left">
+            <p className="font-semibold text-white/80 text-xs md:text-sm">CEO</p>
+            <p className="text-white/80 font-light text-sm md:text-base">Evans</p>
+          </div>
+        </motion.div>
+
+        {/* Arrows + Avatar */}
+        <motion.div
+          className="flex items-center gap-8 md:gap-12 mt-10 md:mt-0 scale-90 md:scale-100"
+          initial={{ opacity: 0, x: 40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1.2, delay: 0.3 }}
+          viewport={{ once: true }}
+        >
+          {/* Arrows */}
+          <div className="flex gap-4 md:gap-6">
+            <button className="p-2 rounded-full hover:bg-white/20 transition transform hover:scale-110 duration-300">
+              <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+            <button className="p-2 rounded-full hover:bg-white/20 transition transform hover:scale-110 duration-300">
+              <ArrowRight className="w-5 h-5 md:w-6 md:h-6" />
+            </button>
+          </div>
+
+          {/* Avatar with floating motion */}
+          <motion.div
+            className="bg-[#A8F28C] p-6 md:p-9 rounded-2xl shadow-lg"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png"
+              alt="Avatar Icon"
+              className="w-10 h-10 md:w-12 md:h-12 rounded-lg"
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </motion.section>
   );
 };
-
 // PrivacySection Component
 const PrivacySection = () => {
   return (
@@ -324,8 +517,7 @@ const PrivacySection = () => {
       </div>
     </div>
   );
-};
-
+}; 
 // DataSecurity Component
 const DataSecurity = () => {
   const securityFeatures = [
