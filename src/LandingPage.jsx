@@ -1,11 +1,23 @@
 
 
-import React, { useRef }  from "react";
-import { motion,useScroll, useTransform  } from "framer-motion";
+import React, { useRef, useState, useEffect }  from "react";
+import { motion,useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { PhoneIcon } from "@heroicons/react/24/solid";
 import bgImage from "./assets/Opendoor.png"; // 🔹 Replace with your actual image file path
 import Allylogo from "./assets/ally logo.svg";
 import { MicIcon, EyeOffIcon, ArrowLeft, ArrowRight } from "lucide-react";
+import img1 from "./assets/1.png";
+import img2 from "./assets/2.png";
+import img3 from "./assets/3.png";
+import img4 from "./assets/4.png";
+import img5 from "./assets/5.png";
+import img12 from "./assets/pro1.png";
+import img22 from "./assets/pro2.png";
+import img32 from "./assets/pro3.png";
+import img42 from "./assets/pro4.png";
+import img52 from "./assets/pro5.png";
+import allyLogo from "./assets/ally logo.svg"; 
+import { FaXTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from "react-icons/fa6";
 const HeroSection = () => {
   return (
     <section className="relative flex flex-col min-h-screen text-white overflow-hidden">
@@ -508,154 +520,482 @@ const SupportSection = () => {
 // PrivacySection Component
 const PrivacySection = () => {
   return (
-    <div className="py-20 px-4 bg-gray-50">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl font-bold mb-8">Are You Wondering?... Your Privacy. Our Promise</h2>
-        <p className="text-gray-600 text-lg leading-relaxed mb-12">
-          Your privacy is our top priority. We use industry-leading security measures to protect your personal information and ensure your conversations remain completely confidential.
+    <section className="bg-white py-24 px-6 md:px-16 text-gray-800">
+      {/* Header */}
+      <motion.div
+        className="text-center mb-20"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        viewport={{ once: true }}
+      >
+        <div className="inline-block border border-gray-300 shadow-sm shadow-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm mb-6 backdrop-blur-sm">
+          Privacy & Data Protection
+        </div>
+        <h2 className="text-4xl md:text-5xl font-bold mb-5">
+          Are You Wondering? … Your Privacy, Our Promise
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          We believe trust is the foundation of healing. Every conversation, every emotion, and
+          every story shared here is safeguarded with care, respect, and technology that puts your
+          privacy first.
         </p>
-      </div>
-    </div>
+      </motion.div>
+
+      <DataSecurity />
+    </section>
   );
-}; 
-// DataSecurity Component
+};
+
 const DataSecurity = () => {
-  const securityFeatures = [
+  const features = [
     {
-      icon: "🛡️",
-      title: "Using Data Responsibly To Improve Our AI",
-      description: "We collect minimal data and use it solely to improve our AI's ability to support you better. Your conversations are never shared with third parties."
+      label: "Data",
+      title: "Using Data Responsibly to Improve Our AI",
+      description:
+        "We use anonymous responses and chat interactions solely to make our AI more understanding, accurate, and supportive. Every piece of information helps the system learn how to respond better — without linking your identity to your conversations.",
+      image: img1,
     },
     {
-      icon: "🔍",
+      label: "Research",
       title: "Research for Social Impact and Safety",
-      description: "Anonymized data helps us understand mental health trends and improve our services. All research is conducted with strict ethical guidelines."
+      description:
+        "Some anonymized data may be analyzed for research and educational purposes, aimed at improving gender-based violence awareness, emotional support systems, and technology for social good. Your personal identity is never attached to this research.",
+      image: img2,
     },
     {
-      icon: "🔐",
+      label: "Confidentiality",
       title: "Confidentiality of Shared Stories",
-      description: "Your stories remain completely confidential. We use enterprise-grade encryption to protect all communications on our platform."
+      description:
+        "Stories, experiences, or testimonials shared within our platform are never posted or shared publicly — not on social media, not in the media, and not with any external organization. Your voice belongs to you alone.",
+      image: img3,
     },
     {
-      icon: "🚫",
+      label: "Integrity",
       title: "No Collection of Personal Identifiable Information",
-      description: "We don't collect unnecessary personal information. You can use our service anonymously without fear of being identified."
+      description:
+        "We do not collect names, addresses, phone numbers, or any personally identifying details. Your conversations remain private, and your anonymity is fully protected at every stage.",
+      image: img4,
     },
     {
-      icon: "🔒",
-      title: "Strict Data Protection From Cybersecurity Concerns",
-      description: "Our platform employs advanced cybersecurity measures including end-to-end encryption and regular security audits to keep your data safe."
-    }
+      label: "Availability",
+      title: "Strong Encryption and Secure Communication",
+      description:
+        "We use advanced cryptographic algorithms and secure network protocols to protect every interaction. Our platform ensures a safe, encrypted connection between you and our system — keeping your data and privacy fully protected.",
+      image: img5,
+    },
   ];
 
   return (
-    <div className="py-20 px-4 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {securityFeatures.map((feature, index) => (
-            <div key={index} className="flex items-start space-x-4">
-              <div className="text-5xl">{feature.icon}</div>
-              <div>
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-              </div>
+    <div className="max-w-6xl mx-auto space-y-24">
+      {features.map((feature, index) => (
+        <motion.div
+          key={index}
+          className={`flex flex-col md:flex-row items-center ${
+            index % 2 === 1 ? "md:flex-row-reverse" : ""
+          } gap-10 md:gap-20`}
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: index * 0.2, ease: "easeOut" }}
+          viewport={{ once: true }}
+        >
+          {/* Text Section */}
+          <div
+            className={`flex-1 relative flex items-start ${
+              index % 2 === 0 ? "justify-end md:pr-10" : "justify-start md:pl-7"
+            }`}
+          >
+            {/* Vertical Line */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 h-16 w-[2px] bg-black ${
+                index % 2 === 0 ? "right-0 translate-x-1/2" : "left-0 -translate-x-1/2"
+              }`}
+            ></div>
+
+            {/* Text Content */}
+            <div className="max-w-md">
+              <span className="text-blue-600 font-medium text-sm mb-2 block">
+                {feature.label}
+              </span>
+              <h3 className="text-xl md:text-2xl font-semibold mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">{feature.description}</p>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+
+          {/* Image Section */}
+          <div className="flex-1 flex justify-center md:justify-center">
+            <div className="bg-gray-50 p-8 rounded-2xl shadow-sm">
+              <img
+                src={feature.image}
+                alt={feature.title}
+                className="w-64 h-64 object-contain"
+              />
+            </div>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 };
 
 // TrustedProfiles Component
+
 const TrustedProfiles = () => {
   const profiles = [
-    { name: "Dr. Sarah Johnson", role: "Clinical Psychologist", specialty: "Trauma & PTSD" },
-    { name: "Dr. Michael Chen", role: "Psychiatrist", specialty: "Depression & Anxiety" },
-    { name: "Dr. Emily Rodriguez", role: "Licensed Therapist", specialty: "Relationship Counseling" }
+    { name: "Dr. Wallace", role: "Clinical Psychologist", image: img22 },
+    { name: "Dr. Grace Mensah", role: "Therapist", image: img12 },
+    { name: "Dr. Kwame Boateng", role: "Legal Counselor", image: img32 },
+    { name: "Dr. Akua Asante", role: "Family Therapist", image: img42 },
+    { name: "Dr. Mabel Owusu", role: "Trauma Specialist", image: img52 },
   ];
 
+  const [index, setIndex] = useState(0);
+  const [isInteracting, setIsInteracting] = useState(false); // hover/touch active
+  const containerRef = useRef(null);
+  const lastChangeRef = useRef(0);
+  const autoRef = useRef(null);
+
+  const xPositions = [-400, -250, 0, 250, 400];
+
+  // Auto spin every 5s, pauses when interacting
+  useEffect(() => {
+    if (autoRef.current) clearInterval(autoRef.current);
+    if (!isInteracting) {
+      autoRef.current = setInterval(() => {
+        setIndex((prev) => (prev + 1) % profiles.length);
+      }, 5000);
+    }
+    return () => clearInterval(autoRef.current);
+  }, [isInteracting, profiles.length]);
+
+  // helper: try to change index with cooldown to avoid jitter
+  const tryChange = (direction) => {
+    const now = Date.now();
+    if (now - lastChangeRef.current < 500) return; // 500ms cooldown
+    lastChangeRef.current = now;
+    setIndex((prev) =>
+      direction === "next" ? (prev + 1) % profiles.length : (prev - 1 + profiles.length) % profiles.length
+    );
+  };
+
+  // pointer-based hover: when cursor over shadow area, determine left/right
+  const onShadowMove = (clientX) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const delta = clientX - centerX;
+
+    // threshold, so small movements don't trigger
+    const threshold = Math.max(40, rect.width * 0.06);
+
+    if (delta > threshold) tryChange("next");
+    else if (delta < -threshold) tryChange("prev");
+  };
+
+  // desktop mouse move handler
+  const handleMouseMove = (e) => {
+    setIsInteracting(true);
+    onShadowMove(e.clientX);
+  };
+
+  // desktop enter/leave
+  const handleMouseEnter = () => {
+    setIsInteracting(true);
+  };
+  const handleMouseLeave = () => {
+    setIsInteracting(false);
+  };
+
+  // touch handlers for mobile
+  const handleTouchStart = (e) => {
+    setIsInteracting(true);
+    if (e.touches && e.touches[0]) onShadowMove(e.touches[0].clientX);
+  };
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches[0]) onShadowMove(e.touches[0].clientX);
+  };
+  const handleTouchEnd = () => {
+    setIsInteracting(false);
+  };
+
   return (
-    <div className="py-20 px-4 bg-gray-50">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-4">Some Of Our Trusted Professional Profiles...</h2>
-        <p className="text-center text-gray-600 mb-12">
-          Connect with licensed professionals who are dedicated to supporting your mental health journey
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {profiles.map((profile, index) => (
-            <div key={index} className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-all">
-              <div className="h-64 bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
-                <div className="text-8xl">👤</div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{profile.name}</h3>
-                <p className="text-blue-600 font-semibold mb-1">{profile.role}</p>
-                <p className="text-gray-600 text-sm">{profile.specialty}</p>
-              </div>
-            </div>
-          ))}
+    <section className="bg-white py-24 text-gray-800 overflow-hidden">
+      {/* Header */}
+      <div className="text-center mb-16">
+        <div className="inline-block border border-gray-300 shadow-sm text-gray-700 px-4 py-1 rounded-full text-sm mb-6 backdrop-blur-sm">
+          Professionals
         </div>
+        <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          Some Of Our Trusted Professional Profiles....
+        </h2>
+        <p className="text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          We work with a network of verified psychologists, legal experts, and
+          relationship counselors dedicated to supporting survivors with care
+          and confidentiality. Each professional brings compassion and
+          expertise to help you heal emotionally, understand your rights, and
+          make informed decisions.
+        </p>
       </div>
-    </div>
+
+      {/* Carousel */}
+      <div
+        className="relative w-full flex items-center justify-center"
+        ref={containerRef}
+      >
+        {/* Cards container - no drag now */}
+        <motion.div
+          className="relative w-[950px] h-[400px] flex items-center justify-center"
+          // keep cursor feedback for desktop when hovering the shadow area
+          role="presentation"
+        >
+          <AnimatePresence initial={false}>
+            {profiles.map((profile, i) => {
+              const position = (i - index + profiles.length) % profiles.length;
+
+              const layout = {
+                0: { scale: 0.6, x: xPositions[0], opacity: 0.2, z: 0 },
+                1: { scale: 0.8, x: xPositions[1], opacity: 0.5, z: 1 },
+                2: { scale: 1.0, x: xPositions[2], opacity: 1.0, z: 5 },
+                3: { scale: 0.8, x: xPositions[3], opacity: 0.5, z: 1 },
+                4: { scale: 0.6, x: xPositions[4], opacity: 0.2, z: 0 },
+              };
+
+              const { scale, x, opacity, z } = layout[position] || layout[0];
+
+              const isActive = position === 2;
+              const isFar = position === 0 || position === 4;
+
+              return (
+                <motion.div
+                  key={profile.name}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity, scale, x }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 180,
+                    damping: 22,
+                    mass: 0.9,
+                  }}
+                  className="absolute rounded-3xl overflow-hidden bg-gray-200"
+                  style={{
+                    width: 280,
+                    height: 360,
+                    zIndex: z,
+                    boxShadow: "0 40px 70px rgba(0,0,0,0.18)",
+                    willChange: "transform, opacity",
+                  }}
+                >
+                  <img
+                    src={profile.image}
+                    alt={profile.name}
+                    className="w-full h-full object-cover"
+                  />
+
+                  {/* Info slides in only for active card */}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ y: 40, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 40, opacity: 0 }}
+                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-4 rounded-b-3xl"
+                      >
+                        <h3 className="text-lg font-semibold">{profile.name}</h3>
+                        <p className="text-sm opacity-90">{profile.role}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Inactive overlays */}
+                  {!isActive && (
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        backgroundColor: isFar ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)",
+                      }}
+                      transition={{ duration: 0.45 }}
+                      className="absolute inset-0"
+                    />
+                  )}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Soft shadow under entire carousel - this is the interactive area */}
+        <div
+          className="absolute bottom-[-40px] w-[900px] h-[120px] rounded-full"
+          style={{ filter: "blur(36px)", background: "rgba(0,0,0,0.20)" }}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        />
+      </div>
+    </section>
   );
 };
-
 // ContactSection Component
+
+const columnData = [
+  {
+    title: "Explore",
+    links: ["About Us", "Contact", "Stories", "Privacy"],
+  },
+  {
+    title: "Resources",
+    links: ["Blog", "Best practices", "Support"],
+  },
+  {
+    title: "Companies with Us",
+    links: [
+      "UI design",
+      "UX design",
+      "Wireframing",
+      "Diagramming",
+      "Brainstorming",
+      "Online whiteboard",
+      "Team collaboration",
+    ],
+  },
+];
+
+const fadeUp = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+
 const ContactSection = () => {
   return (
-    <div className="bg-gray-900 text-white py-16 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          <div>
-            <h4 className="font-bold mb-4">About</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white">Our Mission</a></li>
-              <li><a href="#" className="hover:text-white">Team</a></li>
-              <li><a href="#" className="hover:text-white">Careers</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Services</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white">Crisis Support</a></li>
-              <li><a href="#" className="hover:text-white">Counseling</a></li>
-              <li><a href="#" className="hover:text-white">Resources</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Legal</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-white">Cookie Policy</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-4">Connect</h4>
-            <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white">Facebook</a></li>
-              <li><a href="#" className="hover:text-white">Twitter</a></li>
-              <li><a href="#" className="hover:text-white">Instagram</a></li>
-            </ul>
+    <footer className="w-full bg-gradient-to-b from-gray-800/95 to-black rounded-t-[28px] pt-8 pb-12 text-white overflow-hidden relative">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Top row */}
+        <div className="flex flex-col md:flex-row justify-between gap-12">
+          {/* Logo + socials */}
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={{ show: { transition: { staggerChildren: 0.08 } } }}
+            className="flex flex-col items-center md:items-start gap-6"
+          >
+            {/* Logo */}
+            <motion.div variants={fadeUp}>
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
+                <img
+                  src={allyLogo}
+                  alt="Ally logo"
+                  className="w-9 h-9 object-contain"
+                />
+              </div>
+            </motion.div>
+
+            {/* Social media icons */}
+            <motion.div
+              variants={fadeUp}
+              className="flex gap-5 text-gray-300 text-xl"
+            >
+              <a href="#" className="hover:text-white transition">
+                <FaXTwitter />
+              </a>
+              <a href="#" className="hover:text-white transition">
+                <FaInstagram />
+              </a>
+              <a href="#" className="hover:text-white transition">
+                <FaYoutube />
+              </a>
+              <a href="#" className="hover:text-white transition">
+                <FaLinkedinIn />
+              </a>
+            </motion.div>
+          </motion.div>
+
+          {/* Right columns */}
+          <div className="flex flex-wrap md:flex-nowrap gap-10 md:gap-16 justify-center md:justify-end">
+            {columnData.map((col, idx) => (
+              <motion.div
+                key={col.title}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  show: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { delay: idx * 0.08 },
+                  },
+                }}
+              >
+                <h5 className="text-sm font-semibold mb-4">{col.title}</h5>
+                <ul className="space-y-3 text-gray-300 text-sm">
+                  {col.links.map((l) => (
+                    <li key={l}>
+                      <a href="#" className="hover:text-white transition">
+                        {l}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
           </div>
         </div>
-        
-        <div className="border-t border-gray-700 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <h2 className="text-3xl font-bold mb-4 md:mb-0">Contact Us</h2>
-            <button className="bg-white text-gray-900 p-4 rounded-full hover:bg-gray-100 transition-all">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </button>
-          </div>
+
+        {/* Contact text + arrow */}
+        <div className="relative mt-10 md:mt-14" style={{ minHeight: 240 }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+            className="text-white font-extrabold leading-none absolute left-4 md:left-12 bottom-10 md:bottom-16"
+            style={{ fontSize: "clamp(48px, 10vw, 120px)" }}
+          >
+            Contact Us
+          </motion.h2>
+
+          {/* Arrow Button */}
+          <motion.button
+            initial={{ scale: 0.9, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            whileHover={{ scale: 1.06 }}
+            transition={{ type: "spring", stiffness: 250, damping: 18 }}
+            viewport={{ once: true }}
+            className="absolute right-6 md:right-12 bottom-6 md:bottom-10 w-24 h-24 md:w-28 md:h-28 rounded-full bg-white flex items-center justify-center shadow-2xl"
+          >
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="text-gray-900"
+            >
+              <path
+                d="M7 17L17 7"
+                stroke="#111827"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M17 17V7H7"
+                stroke="#111827"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
-
 // Main LandingPage Component
 const LandingPage = () => {
   return (
