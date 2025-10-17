@@ -8,14 +8,14 @@ import Allylogo from "../assets/ally logo.svg";
 import StoryPlayer from "./StoryPlayer"; // adjust path if needed
 import amaImg from "../assets/ama.png";
 import kwameImg from "../assets/kwame.png";
-import ama1 from "../assets/ama1.mp4";
-import ama2 from "../assets/ama2.mp4";
-import ama3 from "../assets/ama3.mp4";
-import ama4 from "../assets/ama4.mp4";
-import kwame1 from "../assets/kwame1.mp4";
-import kwame2 from "../assets/kwame2.mp4";
-import kwame3 from "../assets/kwame3.mp4";
-import kwame4 from "../assets/kwame4.mp4";
+import ama1 from "../assets/Ama1.mp4";
+import ama2 from "../assets/Ama2.mp4";
+import ama3 from "../assets/Ama3.mp4";
+import ama4 from "../assets/Ama4.mp4";
+import kwame1 from "../assets/Kwame1.mp4";
+import kwame2 from "../assets/Kwame2.mp4";
+import kwame3 from "../assets/Kwame3.mp4";
+import kwame4 from "../assets/Kwame4.mp4";
 
 /** Cup-like spinner component (blocks UI while loading) */
 const CupSpinner = () => {
