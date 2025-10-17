@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import GreetingMessage from "./components/GreetingMessage";
 import { useUser } from "./context/UserContext";
@@ -12,8 +12,8 @@ const LoginPage = () => {
   const handleCharacterSelect = (character) => {
     setSelectedCharacter(character);
     setSelectedAvatar(character);
-    localStorage.setItem('selectedCharacter', JSON.stringify(character));
-    navigate('/interface'); // Navigate to the interface page
+    localStorage.setItem("selectedCharacter", JSON.stringify(character));
+    navigate("/interface"); // Navigate to the interface page
   };
 
   return (
