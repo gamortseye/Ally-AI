@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Header from './Header';
+import Header from './header';
 import ChatBox from './ChatBox';
 import Composer from './Composer';
 import { postJSON, sendAudioToBackend } from '../lib/api';
