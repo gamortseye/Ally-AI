@@ -30,7 +30,7 @@ const TrustedProfiles = () => {
     if (!isInteracting) {
       autoRef.current = setInterval(() => {
         setIndex((prev) => (prev + 1) % profiles.length);
-      }, 10000);
+      }, 5000);
     }
     return () => clearInterval(autoRef.current);
   }, [isInteracting, profiles.length]);
