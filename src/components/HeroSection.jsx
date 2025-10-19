@@ -291,19 +291,26 @@ const LandingPageIntegrated = ({ onClose }) => {
 
 const HeroSection = () => {
   const [showLanding, setShowLanding] = useState(false);
-  const [showStories, setShowStories] = useState(false); // NEW: show stories screen
-  const [autoBlur, setAutoBlur] = useState(false); // auto blur after landing shows
-  const [showSpinner, setShowSpinner] = useState(false); // show spinner while navigating
-  const [showPreloadUI, setShowPreloadUI] = useState(false); // show smart loading UI while preloading
+  const [showStories, setShowStories] = useState(false);
+  const [autoBlur, setAutoBlur] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [showPreloadUI, setShowPreloadUI] = useState(false);
+
+  // Nav collapse state for mobile (three-dot toggles this)
+  const [navCollapsed, setNavCollapsed] = useState(false);
+
+  // tutorial hint visibility (shown on mount for a longer time)
+  const [showTutorial, setShowTutorial] = useState(true);
+
   const navigate = useNavigate();
   const blurTimerRef = useRef(null);
   const navigateTimerRef = useRef(null);
   const preloadTimerRef = useRef(null);
+  const tutorialTimerRef = useRef(null);
 
   useEffect(() => {
     // Manage auto blur after landing appears
     if (showLanding) {
-      // wait ~2s then blur (adjust to taste)
       blurTimerRef.current = setTimeout(() => setAutoBlur(true), 2000);
     } else {
       setAutoBlur(false);
@@ -318,6 +325,17 @@ const HeroSection = () => {
   }, [showLanding]);
 
   useEffect(() => {
+    // tutorial lasts longer: 15s by default
+    tutorialTimerRef.current = setTimeout(() => setShowTutorial(false), 15000);
+    return () => {
+      if (tutorialTimerRef.current) {
+        clearTimeout(tutorialTimerRef.current);
+        tutorialTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     // cleanup navigate/preload timers when component unmounts
     return () => {
       if (navigateTimerRef.current) {
@@ -328,30 +346,23 @@ const HeroSection = () => {
         clearTimeout(preloadTimerRef.current);
         preloadTimerRef.current = null;
       }
+      if (tutorialTimerRef.current) {
+        clearTimeout(tutorialTimerRef.current);
+        tutorialTimerRef.current = null;
+      }
     };
   }, []);
 
   const handleYesClick = async () => {
-    // show cup spinner immediately (blocks basic UI)
     setShowSpinner(true);
-
-    // also show the smarter preload UI shortly after (tiny delay for smoothness)
     preloadTimerRef.current = setTimeout(() => setShowPreloadUI(true), 220);
 
     try {
-      // Preload the login page module so that when we navigate the route already has code.
-      // Adjust path if your LoginPage file is elsewhere.
       await import("../LoginPage");
-
-      // Give the user a short, pleasant pause so the preload UI is visible slightly.
-      // This prevents a jarring instant route-change and covers the blank page window.
       navigateTimerRef.current = setTimeout(() => {
-        // navigate to login route - app should render quickly since module is preloaded
         navigate("/login");
-        // After navigate the current component will unmount and UI overlays removed.
       }, 600);
     } catch (err) {
-      // If preload fails, still navigate (fallback), but keep spinner for a moment
       console.error("Preload failed, navigating anyway:", err);
       navigateTimerRef.current = setTimeout(() => {
         navigate("/login");
@@ -359,76 +370,102 @@ const HeroSection = () => {
     }
   };
 
+  // Toggle mobile nav visibility (only affects small screens; md+ stays as before)
+  const toggleMobileNav = () => setNavCollapsed((s) => !s);
+
   return (
     <section className="relative flex flex-col min-h-screen text-white overflow-hidden">
-      {/* Persistent Navigation (stays visible on all screens) */}
+      {/* Persistent Navigation */}
       <motion.nav
-        className="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-4 sm:px-6 md:px-12 py-4"
+        className={`absolute top-0 left-0 right-0 z-50 px-4 sm:px-6 md:px-12 py-4`}
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-        {/* Left buttons */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-sm backdrop-blur-md"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            ⋯
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-sm backdrop-blur-md"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            En / Fr
-          </motion.button>
-        </div>
-
-        {/* Center Logo */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="flex items-center space-x-2 sm:space-x-3"
+        <div
+          // on mobile, when collapsed we want logo centered; on desktop keep justify-between
+          className={`relative flex items-center ${
+            navCollapsed ? "justify-center" : "justify-between"
+          } md:justify-between`}
         >
-          <img src={Allylogo} alt="Ally Logo" className="w-6 h-6 sm:w-8 sm:h-8" />
-          <span className="hidden sm:inline text-xl sm:text-2xl font-bold text-black tracking-wide">
-            ALLY AI
-          </span>
-        </motion.div>
+          {/* Three-dot button (always visible, single instance) */}
+          <div className="absolute left-4 md:static z-50">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              onClick={toggleMobileNav}
+              aria-label="Toggle nav"
+              className="text-white px-3 rounded-full h-8 flex items-center justify-center text-sm backdrop-blur-md"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              ⋯
+            </motion.button>
+          </div>
 
-        {/* Right Buttons */}
-        <div className="flex items-center space-x-3 sm:space-x-4">
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            }}
+          {/* Left extras (language etc.) — collapsible only on mobile */}
+          <div
+            className={`${navCollapsed ? "hidden md:flex" : "flex md:flex"} items-center space-x-3 sm:space-x-4 ml-12 md:ml-0`}
           >
-            <PhoneIcon className="w-4 h-4 text-white mr-1 sm:mr-2" />
-            +233 894 566 7512
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-sm backdrop-blur-md"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              En / Fr
+            </motion.button>
+          </div>
 
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="text-white px-4 sm:px-6 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
-            style={{
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            }}
+          {/* Center Logo — absolutely centered so hiding left/right keeps it visually centered on mobile */}
+          <motion.div
+            className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-2 sm:space-x-3 pointer-events-none md:pointer-events-auto"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 1 }}
+            style={{ pointerEvents: "none" }} // keep logo non-interactive to avoid blocking small buttons on mobile
           >
-            About Us
-          </motion.button>
+            <img
+              src={Allylogo}
+              alt="Ally Logo"
+              className="w-6 h-6 sm:w-8 sm:h-8 pointer-events-none"
+            />
+            <span className="hidden sm:inline text-xl sm:text-2xl font-bold text-black tracking-wide pointer-events-none">
+              ALLY AI
+            </span>
+          </motion.div>
+
+          {/* Right extras (phone, about) — collapsible only on mobile */}
+          <div
+            className={`${navCollapsed ? "hidden md:flex" : "flex md:flex"} items-center space-x-3 sm:space-x-4`}
+            style={{ marginLeft: "auto" }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <PhoneIcon className="w-4 h-4 text-white mr-1 sm:mr-2" />
+              +233 894 566 7512
+            </motion.button>
+
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="text-white px-4 sm:px-6 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
+              style={{
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              About Us
+            </motion.button>
+          </div>
         </div>
       </motion.nav>
 
@@ -454,7 +491,7 @@ const HeroSection = () => {
             ></div>
 
             {/* Blue Glow */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-64 h-64 md:w-80 md:h-80 bg-blue-500 opacity-40 blur-3xl"></div>
             </div>
 
@@ -490,9 +527,9 @@ const HeroSection = () => {
                 </motion.p>
               </motion.div>
 
-              {/* Bottom Buttons */}
+              {/* Bottom Buttons (moved closer on mobile: bottom-4; desktop unchanged) */}
               <motion.div
-                className="absolute bottom-10 sm:bottom-12 flex justify-center w-full"
+                className="absolute bottom-4 sm:bottom-10 flex justify-center w-full"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2, duration: 1 }}
@@ -503,7 +540,7 @@ const HeroSection = () => {
                 >
                   <motion.button
                     whileHover={{ scale: 1.05 }}
-                    onClick={() => setShowStories(true)} // OPEN stories
+                    onClick={() => setShowStories(true)}
                     className="flex items-center space-x-2 sm:space-x-3 px-4 sm:px-8 py-2 sm:py-3 hover:bg-white hover:bg-opacity-10 transition-all text-sm sm:text-base"
                     style={{ color: "rgba(0,0,0,0.41)" }}
                   >
@@ -527,7 +564,7 @@ const HeroSection = () => {
             </div>
           </motion.div>
         ) : showLanding ? (
-          // === TAKE ACTION LANDING (your existing landing) ===
+          // === TAKE ACTION LANDING ===
           <motion.div
             key="landing"
             initial={{ opacity: 0, scale: 0.95 }}
@@ -590,10 +627,33 @@ const HeroSection = () => {
         )}
       </AnimatePresence>
 
-      {/* Show global spinner while initial action happens */}
-      {showSpinner && <CupSpinner />}
+      {/* Tutorial hint (appears for longer and on desktop too) */}
+      <AnimatePresence>
+        {showTutorial && (
+          <motion.div
+            key="tutorial"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration:0.8}}
+            className="fixed left-1/2 transform -translate-x-1/2 bottom-20 md:bottom-24 z-50 max-w-xl w-[90%] md:w-auto"
+          >
+            <div className="bg-white/95 text-black px-4 py-3 rounded-xl shadow-lg text-center text-sm md:text-base">
+              <strong>Tip:</strong> <span className="ml-2">“Take Action” opens a private chat with our AI for support. “Learn Their Stories” shows survivor stories and resources.</span>
+              <button
+                onClick={() => setShowTutorial(false)}
+                className="ml-3 text-sm text-gray-600 underline"
+                aria-label="Dismiss tutorial"
+              >
+                Dismiss
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Show smart preload UI while login module loads (non-blocking visuals but keeps user informed) */}
+      {/* Overlays */}
+      {showSpinner && <CupSpinner />}
       <AnimatePresence>
         {showPreloadUI && <PreloadLoadingOverlay logoSrc={Allylogo} />}
       </AnimatePresence>
