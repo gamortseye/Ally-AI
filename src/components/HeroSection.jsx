@@ -145,9 +145,29 @@ const PreloadLoadingOverlay = ({ logoSrc }) => {
  * - hovering each image changes a gradient strip below the cards
  * - keeps the top nav visible (because nav is in the parent HeroSection)
  */
+
 const LandingPageIntegrated = ({ onClose }) => {
   const [activeStory, setActiveStory] = useState(null);
   const [hovered, setHovered] = useState(null); // "ama" | "kwame" | null
+
+  // tutorial visibility + timer
+  const [showTutorial, setShowTutorial] = useState(true);
+  const tutorialTimerRef = React.useRef(null);
+
+  useEffect(() => {
+    // auto-dismiss tutorial after 15s
+    tutorialTimerRef.current = setTimeout(() => {
+      setShowTutorial(false);
+      tutorialTimerRef.current = null;
+    }, 15000);
+
+    return () => {
+      if (tutorialTimerRef.current) {
+        clearTimeout(tutorialTimerRef.current);
+        tutorialTimerRef.current = null;
+      }
+    };
+  }, []);
 
   // Scenes
   const survivorScenes = [
@@ -179,17 +199,32 @@ const LandingPageIntegrated = ({ onClose }) => {
 
   return (
     <div className="relative z-20 w-full min-h-screen pt-28 pb-24 bg-white flex items-center justify-center">
-      {/* invisible right-side hot area */}
+      {/* DESKTOP: invisible right-side hot area (click to go back) */}
       <button
-        aria-label="Go back"
+        aria-label="Go back (desktop)"
         onClick={onClose}
-        className="absolute inset-y-0 right-0"
+        className="hidden md:block absolute inset-y-0 right-0"
         style={{
           width: "15%",
           background: "transparent",
           border: "none",
           padding: 0,
           zIndex: 10,
+        }}
+      />
+
+      {/* MOBILE: invisible top-right hot area (click/touch to go back) */}
+      <button
+        aria-label="Go back (mobile)"
+        onClick={onClose}
+        className="md:hidden absolute top-0 right-0"
+        style={{
+          width: "33%",
+          height: 64,
+          background: "transparent",
+          border: "none",
+          padding: 0,
+          zIndex: 20,
         }}
       />
 
@@ -277,6 +312,51 @@ const LandingPageIntegrated = ({ onClose }) => {
         }}
       />
 
+      {/* Tutorial comment: white background, black text, dismiss */}
+      {showTutorial && (
+        <div
+          className="fixed z-50"
+          style={{
+            right: 16,
+            top: 16,
+            // desktop: center-right vertically
+            // we'll override with media query below for md screens
+          }}
+        >
+          <div
+            className="md:fixed md:right-6 md:top-1/2 md:-translate-y-1/2 bg-white text-black rounded-lg shadow-lg px-4 py-3 max-w-xs"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="text-sm md:text-base">
+              <strong>Note:</strong>{" "}
+              <span className="block mt-1">
+                Click or touch the empty space on the <b>right</b> to go back (desktop).
+              </span>
+              <span className="block mt-1 md:hidden">
+                On mobile, tap the empty space at the <b>top right</b> to go back.
+              </span>
+            </div>
+
+            <div className="mt-3 text-right">
+              <button
+                onClick={() => {
+                  setShowTutorial(false);
+                  if (tutorialTimerRef.current) {
+                    clearTimeout(tutorialTimerRef.current);
+                    tutorialTimerRef.current = null;
+                  }
+                }}
+                className="text-sm text-gray-700 underline"
+                aria-label="Dismiss tutorial"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* story overlays */}
       {activeStory === "survivor" && (
         <StoryPlayer title="Ama’s Journey" scenes={survivorScenes} onEnd={() => setActiveStory(null)} />
@@ -287,6 +367,7 @@ const LandingPageIntegrated = ({ onClose }) => {
     </div>
   );
 };
+
 
 const HeroSection = () => {
   const [showLanding, setShowLanding] = useState(false);

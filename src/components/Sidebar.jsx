@@ -20,7 +20,7 @@ const Sidebar = ({ onSelectCharacter, selectedCharacter }) => {
           </div>
 
           <div className="mt-12">
-            <h3 className="text-2xl font-bold mb-8 text-center">Select Your Charator</h3>
+            <h3 className="text-2xl font-bold mb-8 text-center">Select Your Character</h3>
             <CharacterSelector
               onSelectCharacter={onSelectCharacter}
               selectedCharacter={selectedCharacter}
