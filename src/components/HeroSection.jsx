@@ -288,7 +288,6 @@ const LandingPageIntegrated = ({ onClose }) => {
   );
 };
 
-
 const HeroSection = () => {
   const [showLanding, setShowLanding] = useState(false);
   const [showStories, setShowStories] = useState(false);
@@ -298,6 +297,9 @@ const HeroSection = () => {
 
   // Nav collapse state for mobile (three-dot toggles this)
   const [navCollapsed, setNavCollapsed] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined" ? window.innerWidth >= 768 : true
+  );
 
   // tutorial hint visibility (shown on mount for a longer time)
   const [showTutorial, setShowTutorial] = useState(true);
@@ -307,6 +309,21 @@ const HeroSection = () => {
   const navigateTimerRef = useRef(null);
   const preloadTimerRef = useRef(null);
   const tutorialTimerRef = useRef(null);
+
+  // keep navCollapsed consistent on initial load and when resizing
+  useEffect(() => {
+    const handleResize = () => {
+      const desktop = window.innerWidth >= 768;
+      setIsDesktop(desktop);
+      // ensure nav items visible on desktop
+      if (desktop) setNavCollapsed(false);
+    };
+
+    // call once on mount
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     // Manage auto blur after landing appears
@@ -370,7 +387,7 @@ const HeroSection = () => {
     }
   };
 
-  // Toggle mobile nav visibility (only affects small screens; md+ stays as before)
+  // Toggle mobile nav visibility (only affects small screens; desktop stays as before)
   const toggleMobileNav = () => setNavCollapsed((s) => !s);
 
   return (
@@ -383,12 +400,11 @@ const HeroSection = () => {
         transition={{ duration: 1, ease: "easeOut" }}
       >
         <div
-          // on mobile, when collapsed we want logo centered; on desktop keep justify-between
           className={`relative flex items-center ${
             navCollapsed ? "justify-center" : "justify-between"
           } md:justify-between`}
         >
-          {/* Three-dot button (always visible, single instance) */}
+          {/* Three-dot button (single instance) */}
           <div className="absolute left-4 md:static z-50">
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -404,29 +420,29 @@ const HeroSection = () => {
             </motion.button>
           </div>
 
-          {/* Left extras (language etc.) — collapsible only on mobile */}
-          <div
-            className={`${navCollapsed ? "hidden md:flex" : "flex md:flex"} items-center space-x-3 sm:space-x-4 ml-12 md:ml-0`}
-          >
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-sm backdrop-blur-md"
-              style={{
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              En / Fr
-            </motion.button>
-          </div>
+          {/* Left extras (language etc.) — show on desktop OR when nav not collapsed */}
+          {(isDesktop || !navCollapsed) && (
+            <div className="flex items-center space-x-3 sm:space-x-4 ml-12 md:ml-0">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-sm backdrop-blur-md"
+                style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                En / Fr
+              </motion.button>
+            </div>
+          )}
 
-          {/* Center Logo — absolutely centered so hiding left/right keeps it visually centered on mobile */}
+          {/* Center Logo — absolutely centered */}
           <motion.div
             className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-2 sm:space-x-3 pointer-events-none md:pointer-events-auto"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1 }}
-            style={{ pointerEvents: "none" }} // keep logo non-interactive to avoid blocking small buttons on mobile
+            style={{ pointerEvents: "none" }}
           >
             <img
               src={Allylogo}
@@ -438,34 +454,33 @@ const HeroSection = () => {
             </span>
           </motion.div>
 
-          {/* Right extras (phone, about) — collapsible only on mobile */}
-          <div
-            className={`${navCollapsed ? "hidden md:flex" : "flex md:flex"} items-center space-x-3 sm:space-x-4`}
-            style={{ marginLeft: "auto" }}
-          >
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
-              style={{
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <PhoneIcon className="w-4 h-4 text-white mr-1 sm:mr-2" />
-              +233 894 566 7512
-            </motion.button>
+          {/* Right extras (phone, about) — show on desktop OR when nav not collapsed */}
+          {(isDesktop || !navCollapsed) && (
+            <div className="flex items-center space-x-3 sm:space-x-4" style={{ marginLeft: "auto" }}>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                className="text-white px-3 sm:px-4 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
+                style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <PhoneIcon className="w-4 h-4 text-white mr-1 sm:mr-2" />
+                +233 894 566 7512
+              </motion.button>
 
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              className="text-white px-4 sm:px-6 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
-              style={{
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              About Us
-            </motion.button>
-          </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                className="text-white px-4 sm:px-6 rounded-full h-8 flex items-center justify-center text-xs sm:text-sm backdrop-blur-md"
+                style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                About Us
+              </motion.button>
+            </div>
+          )}
         </div>
       </motion.nav>
 
@@ -527,9 +542,12 @@ const HeroSection = () => {
                 </motion.p>
               </motion.div>
 
-              {/* Bottom Buttons (moved closer on mobile: bottom-4; desktop unchanged) */}
+              {/* Bottom Buttons
+                  - On mobile: rendered in-flow (static) just under the hero content so it's visible and close.
+                  - On sm+ screens: positioned absolute at the bottom as before.
+              */}
               <motion.div
-                className="absolute bottom-4 sm:bottom-10 flex justify-center w-full"
+                className="flex justify-center w-full sm:absolute sm:bottom-10 bottom-4"
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2, duration: 1 }}
@@ -542,7 +560,7 @@ const HeroSection = () => {
                     whileHover={{ scale: 1.05 }}
                     onClick={() => setShowStories(true)}
                     className="flex items-center space-x-2 sm:space-x-3 px-4 sm:px-8 py-2 sm:py-3 hover:bg-white hover:bg-opacity-10 transition-all text-sm sm:text-base"
-                    style={{ color: "rgba(0,0,0,0.41)" }}
+                    style={{ color: "rgba(0,0,0,0.80)" }}
                   >
                     <span className="text-lg sm:text-2xl">←</span>
                     <span className="font-medium">Learn Their Stories</span>
@@ -554,7 +572,7 @@ const HeroSection = () => {
                     whileHover={{ scale: 1.05 }}
                     onClick={() => setShowLanding(true)}
                     className="flex items-center space-x-2 sm:space-x-3 px-4 sm:px-8 py-2 sm:py-3 hover:bg-white hover:bg-opacity-10 transition-all text-sm sm:text-base"
-                    style={{ color: "rgba(0,0,0,0.41)" }}
+                    style={{ color: "rgba(0,0,0,0.80)" }}
                   >
                     <span className="font-medium">Take Action</span>
                     <span className="text-lg sm:text-2xl">→</span>
@@ -635,11 +653,14 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration:0.8}}
+            transition={{ duration: 0.4 }}
             className="fixed left-1/2 transform -translate-x-1/2 bottom-20 md:bottom-24 z-50 max-w-xl w-[90%] md:w-auto"
           >
             <div className="bg-white/95 text-black px-4 py-3 rounded-xl shadow-lg text-center text-sm md:text-base">
-              <strong>Tip:</strong> <span className="ml-2">“Take Action” opens a private chat with our AI for support. “Learn Their Stories” shows survivor stories and resources.</span>
+              <strong>Tip:</strong>{" "}
+              <span className="ml-2">
+                “Take Action” opens a private chat with our AI for support. “Learn Their Stories” shows survivor stories and resources.
+              </span>
               <button
                 onClick={() => setShowTutorial(false)}
                 className="ml-3 text-sm text-gray-600 underline"
